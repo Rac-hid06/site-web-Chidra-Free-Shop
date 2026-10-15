@@ -1,31 +1,28 @@
-﻿function getCurrentUser() {
+﻿const CURRENT_USER_KEY = 'chidraCurrentUser';
+
+function getApiBase() {
+  const isLocal = window.location.protocol === 'file:'
+    || window.location.hostname === 'localhost'
+    || window.location.hostname === '127.0.0.1';
+  return isLocal ? 'https://site-web-chidra-free-shop.onrender.com/api' : '/api';
+}
+
+function getCurrentUser() {
   try {
-    return JSON.parse(localStorage.getItem('currentUser') || 'null');
+    return JSON.parse(sessionStorage.getItem(CURRENT_USER_KEY) || 'null');
   } catch (e) {
     return null;
   }
 }
 
 function setCurrentUser(user) {
-  localStorage.setItem('currentUser', JSON.stringify(user));
+  sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
   updateNavVisibility();
 }
 
 function logoutCurrentUser() {
-  localStorage.removeItem('currentUser');
+  sessionStorage.removeItem(CURRENT_USER_KEY);
   updateNavVisibility();
-}
-
-function getStoredUsers() {
-  try {
-    return JSON.parse(localStorage.getItem('users') || '[]');
-  } catch (e) {
-    return [];
-  }
-}
-
-function saveStoredUsers(users) {
-  localStorage.setItem('users', JSON.stringify(users));
 }
 
 function updateNavVisibility() {
@@ -178,13 +175,6 @@ function setupSharedPageStyle() {
   }
   updateCurrentYear();
   applySiteSettings();
-}
-
-function enforceAdminAccess() {
-  const user = getCurrentUser();
-  if (user?.role !== 'admin') {
-    window.location.href = 'compte.html?redirect=admin.html';
-  }
 }
 
 function getQueryParam(name) {

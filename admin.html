@@ -43,7 +43,7 @@
   .admin-tab{width:100%;display:flex;align-items:center;gap:.65rem;border:0;background:transparent;color:#aaa;text-align:left;padding:.8rem;border-radius:10px;font:inherit;cursor:pointer}
   .admin-tab:hover,.admin-tab.active{background:#242424;color:var(--lime)}
   .admin-view{display:none}.admin-view.active{display:block}
-  .overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+  .overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
   .stat-card{background:#121212;border:1px solid #262626;border-radius:16px;padding:1.1rem;color:#fff}.stat-card span{display:block;color:#999;font-size:.78rem;margin-bottom:.5rem}.stat-card strong{font-size:1.7rem}
   .section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}.section-heading h2{margin:0}
   .toolbar{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}.toolbar input{max-width:260px}
@@ -71,7 +71,6 @@
     <aside class="admin-sidebar" aria-label="Navigation administration">
       <button class="admin-tab active" data-view="overview">▦ Vue d'ensemble</button>
       <button class="admin-tab" data-view="catalogue">▣ Catalogue</button>
-      <button class="admin-tab" data-view="users">♙ Utilisateurs</button>
       <button class="admin-tab" data-view="newsletter">✉ Newsletter</button>
       <button class="admin-tab" data-view="settings">⚙ Paramètres</button>
     </aside>
@@ -80,10 +79,9 @@
         <div class="overview-grid">
           <div class="stat-card"><span>Produits</span><strong id="productTotal">0</strong></div>
           <div class="stat-card"><span>Images actives</span><strong id="imageTotal">0</strong></div>
-          <div class="stat-card"><span>Utilisateurs</span><strong id="userTotal">0</strong></div>
-          <div class="stat-card"><span>Administrateurs</span><strong id="adminTotal">0</strong></div>
+          <div class="stat-card"><span>Connecté en tant que</span><strong id="adminName">Admin</strong></div>
         </div>
-        <div class="panel"><div class="section-heading"><h2>Activité rapide</h2><span class="muted">Données locales</span></div><p class="muted">Utilise les onglets pour modifier le catalogue, les comptes et les informations visibles sur le site.</p></div>
+        <div class="panel"><div class="section-heading"><h2>Activité rapide</h2><span class="muted">Catalogue et newsletter en ligne</span></div><p class="muted">Le catalogue et la newsletter sont gérés sur le serveur. Les paramètres du site restent enregistrés uniquement dans ce navigateur.</p></div>
       </section>
       <section class="admin-view" id="catalogueView">
         <div class="grid">
@@ -107,9 +105,6 @@
           </div>
         </div>
       </section>
-      <section class="admin-view" id="usersView">
-        <div class="panel"><div class="section-heading"><h2>Utilisateurs</h2><button id="refreshUsersBtn" class="small-btn">↻ Actualiser</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Action</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
-      </section>
       <section class="admin-view" id="newsletterView">
         <div class="panel"><div class="section-heading"><h2>Abonnés newsletter</h2><button id="refreshNewsletterBtn" class="small-btn">↻ Actualiser</button></div><p class="muted">Les abonnés recevront les nouveautés produits via Brevo.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Email</th><th>Action</th></tr></thead><tbody id="newsletterTable"></tbody></table></div><div id="newsletterStatus" class="status"></div></div>
       </section>
@@ -131,10 +126,9 @@
 <div class="footer-link">Espace administration Chidra Free Shop</div>
 <script src="common.js"></script>
 <script>
-  const apiBase = 'https://site-web-chidra-free-shop.onrender.com/api';
+  const apiBase = getApiBase();
   const publicApiBase = `${apiBase}/products`;
   const adminApiBase = `${apiBase}/admin/products`;
-  const adminApiTokenKey = 'chidraAdminApiToken';
   const productList = document.getElementById('productList');
   const saveBtn = document.getElementById('saveBtn');
   const clearBtn = document.getElementById('clearBtn');
@@ -142,7 +136,6 @@
   const imageFileInput = document.getElementById('imageFile');
   const imagePreviewContainer = document.getElementById('imagePreviewContainer');
   const imagePreview = document.getElementById('imagePreview');
-  const usersTable = document.getElementById('usersTable');
   const settingsStatus = document.getElementById('settingsStatus');
   const newsletterTable = document.getElementById('newsletterTable');
   const newsletterStatus = document.getElementById('newsletterStatus');
@@ -153,23 +146,10 @@
   const newsletterApiBase = `${apiBase}/newsletter`;
 
   async function adminFetch(url, options = {}) {
-    let token = sessionStorage.getItem(adminApiTokenKey);
-    if (!token) {
-      token = window.prompt('Saisis le jeton API admin configuré dans Render.');
-      if (!token || !token.trim()) throw new Error('Jeton admin non saisi.');
-      token = token.trim();
-      sessionStorage.setItem(adminApiTokenKey, token);
-    }
-
-    const headers = new Headers(options.headers || {});
-    headers.set('Authorization', `Bearer ${token}`);
-    const response = await fetch(url, {...options, headers});
+    const response = await fetch(url, {...options, credentials: 'include'});
     if (response.status === 401) {
-      sessionStorage.removeItem(adminApiTokenKey);
-      alert('Jeton admin invalide. Il sera redemandé à la prochaine action.');
-    }
-    if (response.status === 503) {
-      alert('Le jeton admin n’est pas encore configuré dans Render.');
+      logoutCurrentUser();
+      window.location.replace('compte.html?redirect=admin.html');
     }
     return response;
   }
@@ -186,18 +166,7 @@
   function updateDashboardStats() {
     document.getElementById('productTotal').textContent = products.length;
     document.getElementById('imageTotal').textContent = products.filter(product => product.image).length;
-    const users = getStoredUsers();
-    document.getElementById('userTotal').textContent = users.length;
-    document.getElementById('adminTotal').textContent = users.filter(user => user.role === 'admin').length;
-  }
-
-  function renderUsers() {
-    const users = getStoredUsers();
-    usersTable.innerHTML = users.length ? users.map((user, index) => `
-      <tr><td>${user.name || 'Sans nom'}</td><td>${user.email}</td><td>${user.role || 'customer'}</td>
-      <td><button class="small-btn ${user.role === 'admin' ? 'ghost' : ''}" onclick="toggleUserRole(${index})">${user.role === 'admin' ? 'Rendre client' : 'Rendre admin'}</button>
-      <button class="small-btn danger" onclick="deleteUser(${index})" ${user.email === 'admin@chidra.com' ? 'disabled title="Compte principal protégé"' : ''}>Supprimer</button></td></tr>
-    `).join('') : '<tr><td colspan="4" class="muted">Aucun utilisateur enregistré.</td></tr>';
+    document.getElementById('adminName').textContent = getCurrentUser()?.name || 'Admin';
   }
 
   async function renderNewsletter() {
@@ -233,20 +202,6 @@
       const field = document.getElementById(`site${key[0].toUpperCase()}${key.slice(1)}`);
       if (field) field.value = value;
     });
-  }
-
-  function toggleUserRole(index) {
-    const users = getStoredUsers();
-    if (!users[index]) return;
-    users[index].role = users[index].role === 'admin' ? 'customer' : 'admin';
-    saveStoredUsers(users); renderUsers(); updateDashboardStats();
-  }
-
-  function deleteUser(index) {
-    const users = getStoredUsers();
-    if (!users[index] || users[index].email === 'admin@chidra.com' || !confirm(`Supprimer ${users[index].email} ?`)) return;
-    if (getCurrentUser()?.email === users[index].email) logoutCurrentUser();
-    users.splice(index, 1); saveStoredUsers(users); renderUsers(); updateDashboardStats();
   }
 
   document.querySelectorAll('.admin-tab').forEach(tab => tab.addEventListener('click', () => {
@@ -393,24 +348,33 @@
 
   clearBtn.addEventListener('click', clearForm);
   document.getElementById('refreshBtn').addEventListener('click', fetchProducts);
-  document.getElementById('refreshUsersBtn').addEventListener('click', renderUsers);
   document.getElementById('refreshNewsletterBtn').addEventListener('click', renderNewsletter);
   document.getElementById('saveSettingsBtn').addEventListener('click', () => {
     const settings = {name: siteName.value.trim(), slogan: siteSlogan.value.trim(), phone: sitePhone.value.trim(), email: siteEmail.value.trim(), description: siteDescription.value.trim()};
     localStorage.setItem('siteSettings', JSON.stringify(settings));
     settingsStatus.textContent = 'Paramètres enregistrés pour ce navigateur.';
   });
-  window.addEventListener('DOMContentLoaded', () => {
+  async function initializeAdmin() {
+    try {
+      const response = await fetch(`${apiBase}/auth/me`, {credentials: 'include'});
+      if (!response.ok) throw new Error('Session expirée.');
+      const user = await response.json();
+      if (user.role !== 'admin') {
+        window.location.replace('compte.html');
+        return;
+      }
+      setCurrentUser(user);
+    } catch (error) {
+      logoutCurrentUser();
+      window.location.replace('compte.html?redirect=admin.html');
+      return;
+    }
     updateNavVisibility();
-    enforceAdminAccess();
-    renderUsers();
     renderNewsletter();
     loadSettings();
     fetchProducts();
-  });
-  document.querySelector('a[href="compte.html?logout=1"]').addEventListener('click', () => {
-    sessionStorage.removeItem(adminApiTokenKey);
-  });
+  }
+  window.addEventListener('DOMContentLoaded', initializeAdmin);
 </script>
 </body>
 </html>

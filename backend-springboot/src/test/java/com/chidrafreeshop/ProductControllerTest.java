@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +17,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -140,74 +136,5 @@ class ProductControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue((Boolean) response.getBody().get("success"));
         assertEquals("https://www.orange.com/", response.getBody().get("paymentUrl"));
-    }
-
-    @Test
-    void adminApiRejectsRequestsWhenTokenIsNotConfigured() throws Exception {
-        AdminApiTokenFilter filter = new AdminApiTokenFilter("");
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/admin/products");
-        request.setServletPath("/api/admin/products");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        FilterChain chain = new MockFilterChain();
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), response.getStatus());
-    }
-
-    @Test
-    void adminApiRejectsRequestsWithAnInvalidToken() throws Exception {
-        AdminApiTokenFilter filter = new AdminApiTokenFilter("expected-token");
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/admin/products");
-        request.setServletPath("/api/admin/products");
-        request.addHeader("Authorization", "Bearer wrong-token");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        FilterChain chain = new MockFilterChain();
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
-    }
-
-    @Test
-    void adminApiAllowsRequestsWithTheConfiguredToken() throws Exception {
-        AdminApiTokenFilter filter = new AdminApiTokenFilter("expected-token");
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/admin/products");
-        request.setServletPath("/api/admin/products");
-        request.addHeader("Authorization", "Bearer expected-token");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain chain = new MockFilterChain();
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertSame(request, chain.getRequest());
-    }
-
-    @Test
-    void adminApiFilterDoesNotRequireTokensForPublicRoutes() throws Exception {
-        AdminApiTokenFilter filter = new AdminApiTokenFilter("");
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/products");
-        request.setServletPath("/api/products");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain chain = new MockFilterChain();
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertSame(request, chain.getRequest());
-    }
-
-    @Test
-    void newsletterUnsubscribeRejectsRequestsWithoutAnAdminToken() throws Exception {
-        AdminApiTokenFilter filter = new AdminApiTokenFilter("expected-token");
-        MockHttpServletRequest request = new MockHttpServletRequest("DELETE", "/api/newsletter/subscribe");
-        request.setServletPath("/api/newsletter/subscribe");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        FilterChain chain = new MockFilterChain();
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
     }
 }

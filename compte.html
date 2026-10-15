@@ -25,23 +25,18 @@
   .form-group label{font-size:.85rem;color:#ccc}
   .form-group input{width:100%;padding:1rem;border-radius:14px;border:1px solid #333;background:#101010;color:#fff;font-family:inherit}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-  .button-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
   .btn{background:var(--electric);color:#fff;border:none;padding:1rem 1.4rem;border-radius:14px;font-weight:700;cursor:pointer;transition:background .2s}
   .btn:hover{background:#1558d0}
   .secondary-btn{background:#444;}
-  .status{color:var(--lime);font-size:.95rem;margin-top:.75rem}
-  .text-btn{display:block;margin-top:.8rem;padding:0;background:none;border:0;color:var(--lime);cursor:pointer;font:inherit;font-size:.85rem;text-decoration:underline}
-  .forgot-box{margin-top:1rem;padding-top:1rem;border-top:1px solid #333}
+  .status{color:var(--lime);font-size:.95rem;margin-top:.75rem;line-height:1.6}
+  .status a{color:var(--lime)}
   .account-box{background:#111;border:1px solid #222;border-radius:20px;padding:1.5rem;}
   .account-box div{margin-bottom:.8rem}
   .account-box label{color:#aaa;font-size:.85rem}
   .account-box strong{display:block;margin-top:.35rem;font-size:1rem;color:#fff}
   .footer-link{display:block;text-align:center;padding:2rem;color:#aaa;text-decoration:none}
-  @media(max-width:768px){
-    .form-row,.auth-grid{grid-template-columns:1fr}
-    .container{padding:1.25rem}
-    .card{padding:1.5rem;border-radius:18px}
-  }
+  .is-hidden{display:none!important}
+  @media(max-width:768px){.form-row,.auth-grid{grid-template-columns:1fr}.container{padding:1.25rem}.card{padding:1.5rem;border-radius:18px}}
 </style>
 </head>
 <body>
@@ -60,27 +55,24 @@
 <div class="container">
   <div class="header">
     <h1>Mon compte</h1>
-    <p>Crée ton compte ou connecte-toi pour accéder à ton espace personnel et suivre tes commandes.</p>
+    <p>Crée ton compte ou connecte-toi pour accéder à ton espace personnel.</p>
   </div>
-  <div class="auth-grid">
-  <div class="card">
-    <h2>Accès au compte</h2>
-    <div class="form-row">
-      <div>
-        <h2>Connexion</h2>
-        <div class="form-group"><label for="loginEmail">Email</label><input id="loginEmail" type="email"></div>
-        <div class="form-group"><label for="loginPassword">Mot de passe</label><input id="loginPassword" type="password"></div>
-        <button id="loginBtn" class="btn">Se connecter</button><div id="loginStatus" class="status"></div>
-        <button id="forgotPasswordBtn" class="text-btn" type="button">Mot de passe oublié ?</button>
-        <div id="forgotPasswordBox" class="forgot-box is-hidden"><div class="form-group"><label for="forgotEmail">Email du compte</label><input id="forgotEmail" type="email"></div><div class="form-group"><label for="forgotNewPassword">Nouveau mot de passe</label><input id="forgotNewPassword" type="password"></div><button id="resetPasswordBtn" class="btn" type="button">Réinitialiser</button><div id="forgotStatus" class="status"></div></div>
-      </div>
-      <div>
-        <h2>Créer un compte</h2>
-        <div class="form-group"><label for="signupName">Nom</label><input id="signupName" type="text"></div>
-        <div class="form-group"><label for="signupEmail">Email</label><input id="signupEmail" type="email"></div>
-        <div class="form-group"><label for="signupPassword">Mot de passe</label><input id="signupPassword" type="password"></div>
-        <button id="signupBtn" class="btn secondary-btn">Créer un compte</button><div id="signupStatus" class="status"></div>
-      </div>
+  <div class="auth-grid" id="authForms">
+    <div class="card">
+      <h2>Connexion</h2>
+      <div class="form-group"><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="username"></div>
+      <div class="form-group"><label for="loginPassword">Mot de passe</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
+      <button id="loginBtn" class="btn" type="button">Se connecter</button>
+      <div id="loginStatus" class="status" role="status"></div>
+      <p class="status">Mot de passe oublié ? Contacte <a href="mailto:nacanaboprinceabdoulrachid@gmail.com">la boutique</a> pour récupérer l’accès à ton compte.</p>
+    </div>
+    <div class="card">
+      <h2>Créer un compte</h2>
+      <div class="form-group"><label for="signupName">Nom</label><input id="signupName" type="text" autocomplete="name" maxlength="120"></div>
+      <div class="form-group"><label for="signupEmail">Email</label><input id="signupEmail" type="email" autocomplete="email"></div>
+      <div class="form-group"><label for="signupPassword">Mot de passe (10 caractères minimum)</label><input id="signupPassword" type="password" autocomplete="new-password"></div>
+      <button id="signupBtn" class="btn secondary-btn" type="button">Créer un compte</button>
+      <div id="signupStatus" class="status" role="status"></div>
     </div>
   </div>
   <div class="card account-box is-hidden" id="profileBox">
@@ -88,12 +80,13 @@
     <div><label>Utilisateur</label><strong id="profileName"></strong></div>
     <div><label>Email</label><strong id="profileEmail"></strong></div>
     <div><label>Rôle</label><strong id="profileRole"></strong></div>
-    <button id="logoutBtn" class="btn secondary-btn">Se déconnecter</button>
+    <button id="logoutBtn" class="btn secondary-btn" type="button">Se déconnecter</button>
   </div>
 </div>
 <a class="footer-link" href="Chidra Free Shop.html">← Retour à l'accueil</a>
 <script src="common.js"></script>
 <script>
+  const apiBase = getApiBase();
   const loginEmail = document.getElementById('loginEmail');
   const loginPassword = document.getElementById('loginPassword');
   const loginStatus = document.getElementById('loginStatus');
@@ -102,129 +95,125 @@
   const signupPassword = document.getElementById('signupPassword');
   const signupStatus = document.getElementById('signupStatus');
   const profileBox = document.getElementById('profileBox');
+  const authForms = document.getElementById('authForms');
   const profileName = document.getElementById('profileName');
   const profileEmail = document.getElementById('profileEmail');
   const profileRole = document.getElementById('profileRole');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const forgotPasswordBox = document.getElementById('forgotPasswordBox');
-  const forgotEmail = document.getElementById('forgotEmail');
-  const forgotNewPassword = document.getElementById('forgotNewPassword');
-  const forgotStatus = document.getElementById('forgotStatus');
 
-  function ensureDefaultAdmin() {
-    const users = getStoredUsers();
-    const adminExists = users.some(u => u.email === 'admin@chidra.com');
-    if(!adminExists){
-      users.push({name:'Admin',email:'admin@chidra.com',password:'admin123',role:'admin'});
-      saveStoredUsers(users);
-    }
+  function setStatus(element, message, color) {
+    element.textContent = message;
+    if (color) element.style.color = color;
   }
 
-  function validateEmail(email){ return email && email.includes('@'); }
-
-  function setStatus(el,message,color){ el.textContent = message; if(color) el.style.color = color; }
-
-  function renderProfile(user){
-    if(!user){ profileBox.classList.add('is-hidden'); return; }
-    profileBox.classList.remove('is-hidden');
+  function renderProfile(user) {
+    authForms.classList.toggle('is-hidden', Boolean(user));
+    profileBox.classList.toggle('is-hidden', !user);
+    if (!user) return;
     profileName.textContent = user.name || 'Utilisateur';
     profileEmail.textContent = user.email;
-    profileRole.textContent = user.role;
+    profileRole.textContent = user.role === 'admin' ? 'Administrateur' : 'Client';
   }
 
-  function loadProfile(){
-    const user = getCurrentUser();
-    if(getQueryParam('logout') === '1'){
-      logoutCurrentUser();
-      window.location.href = 'compte.html';
-      return;
+  async function logout() {
+    try {
+      await fetch(`${apiBase}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Could not revoke the account session.', error);
     }
-    if(user?.role === 'admin'){
-      window.location.href = 'admin.html';
-      return;
-    }
-    renderProfile(user);
-  }
-
-  function createUser(name,email,password){
-    const users = getStoredUsers();
-    if(users.some(u => u.email === email)) return null;
-    const role = (email==='admin@chidra.com' && password==='admin123') ? 'admin' : 'customer';
-    const user = {name, email, password, role};
-    users.push(user);
-    saveStoredUsers(users);
-    return user;
-  }
-
-  function loginUser(email,password){
-    const users = getStoredUsers();
-    return users.find(u => u.email===email && u.password===password) || null;
-  }
-
-  forgotPasswordBtn.addEventListener('click', () => {
-    forgotPasswordBox.classList.toggle('is-hidden');
-    forgotStatus.textContent = '';
-  });
-
-  resetPasswordBtn.addEventListener('click', () => {
-    const email = forgotEmail.value.trim().toLowerCase();
-    const password = forgotNewPassword.value.trim();
-    if(!validateEmail(email) || password.length < 6){
-      setStatus(forgotStatus,'Email valide et mot de passe de 6 caractères minimum requis','var(--lime)');
-      return;
-    }
-    const users = getStoredUsers();
-    const user = users.find(item => item.email.toLowerCase() === email);
-    if(!user){ setStatus(forgotStatus,'Aucun compte trouvé avec cet email','red'); return; }
-    user.password = password;
-    saveStoredUsers(users);
-    setStatus(forgotStatus,'Mot de passe réinitialisé. Tu peux te connecter.','var(--lime)');
-    forgotEmail.value = '';
-    forgotNewPassword.value = '';
-    forgotPasswordBox.classList.add('is-hidden');
-  });
-
-  loginBtn.addEventListener('click', () => {
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value.trim();
-    if(!validateEmail(email) || !password){ setStatus(loginStatus,'Email et mot de passe requis','var(--lime)'); return; }
-    const user = loginUser(email,password);
-    if(!user){ setStatus(loginStatus,'Identifiants incorrects','red'); return; }
-    setCurrentUser(user);
-    setStatus(loginStatus,'Connecté avec succès','var(--lime)');
-    renderProfile(user);
-    redirectAfterLogin();
-  });
-
-  signupBtn.addEventListener('click', () => {
-    const name = signupName.value.trim();
-    const email = signupEmail.value.trim();
-    const password = signupPassword.value.trim();
-    if(!name || !validateEmail(email) || !password){ setStatus(signupStatus,'Tous les champs sont requis','var(--lime)'); return; }
-    const user = createUser(name,email,password);
-    if(!user){ setStatus(signupStatus,'Email déjà utilisé','red'); return; }
-    setCurrentUser(user);
-    setStatus(signupStatus,'Compte créé avec succès','var(--lime)');
-    renderProfile(user);
-    redirectAfterLogin();
-  });
-
-  logoutBtn.addEventListener('click', () => {
     logoutCurrentUser();
     renderProfile(null);
-    window.location.href = 'compte.html';
-  });
-
-  function redirectAfterLogin(){
-    const redirect = getQueryParam('redirect');
-    if(redirect){ window.location.href = redirect; return; }
-    const user = getCurrentUser();
-    if(user?.role === 'admin'){ window.location.href = 'admin.html'; return; }
-    window.location.href = 'Chidra Free Shop.html';
   }
 
-  ensureDefaultAdmin();
-  loadProfile();
+  async function loadProfile() {
+    if (getQueryParam('logout') === '1') {
+      await logout();
+      window.location.replace('compte.html');
+      return;
+    }
+    try {
+      const response = await fetch(`${apiBase}/auth/me`, {credentials: 'include'});
+      if (!response.ok) throw new Error('Session expirée.');
+      const user = await response.json();
+      setCurrentUser(user);
+      renderProfile(user);
+      if (user.role === 'admin') window.location.replace('admin.html');
+    } catch (error) {
+      logoutCurrentUser();
+      renderProfile(null);
+      setStatus(loginStatus, 'Ta session a expiré. Reconnecte-toi.', 'var(--lime)');
+    }
+  }
+
+  async function authenticate(path, credentials, statusElement) {
+    statusElement.textContent = '';
+    try {
+      const response = await fetch(`${apiBase}/auth/${path}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(credentials)
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        statusElement.textContent = result.message || result.detail || 'Impossible de créer la session.';
+        return;
+      }
+      setCurrentUser(result);
+      renderProfile(result);
+      redirectAfterLogin(result);
+    } catch (error) {
+      setStatus(statusElement, 'Serveur momentanément inaccessible. Réessaie plus tard.', 'red');
+    }
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
+    if (!email || !password) {
+      setStatus(loginStatus, 'Email et mot de passe requis.', 'var(--lime)');
+      return;
+    }
+    authenticate('login', {email, password}, loginStatus);
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', () => {
+    const name = signupName.value.trim();
+    const email = signupEmail.value.trim();
+    const password = signupPassword.value;
+    if (!name || !email || !password) {
+      setStatus(signupStatus, 'Tous les champs sont requis.', 'var(--lime)');
+      return;
+    }
+    if (password.length < 10) {
+      setStatus(signupStatus, 'Choisis un mot de passe de 10 caractères minimum.', 'var(--lime)');
+      return;
+    }
+    authenticate('register', {name, email, password}, signupStatus);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await logout();
+    window.location.replace('compte.html');
+  });
+
+  function redirectAfterLogin(user) {
+    const redirect = getQueryParam('redirect');
+    if (redirect) {
+      const target = new URL(redirect, window.location.href);
+      if (target.origin === window.location.origin) {
+        window.location.replace(target.href);
+        return;
+      }
+    }
+    window.location.replace(user.role === 'admin' ? 'admin.html' : 'Chidra Free Shop.html');
+  }
+
+  localStorage.removeItem('users');
+  localStorage.removeItem('currentUser');
+  window.addEventListener('DOMContentLoaded', loadProfile);
 </script>
 </body>
 </html>
