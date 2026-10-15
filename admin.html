@@ -131,8 +131,9 @@
 <div class="footer-link">Espace administration Chidra Free Shop</div>
 <script src="common.js"></script>
 <script>
-  const publicApiBase = 'http://localhost:8080/api/products';
-  const adminApiBase = 'http://localhost:8080/api/admin/products';
+  const apiBase = 'https://site-web-chidra-free-shop.onrender.com/api';
+  const publicApiBase = `${apiBase}/products`;
+  const adminApiBase = `${apiBase}/admin/products`;
   const adminApiTokenKey = 'chidraAdminApiToken';
   const productList = document.getElementById('productList');
   const saveBtn = document.getElementById('saveBtn');
@@ -149,7 +150,7 @@
   let editingId = null;
   let uploadedImageBase64 = null;
   let products = [];
-  const newsletterApiBase = 'http://localhost:8080/api/newsletter';
+  const newsletterApiBase = `${apiBase}/newsletter`;
 
   async function adminFetch(url, options = {}) {
     let token = sessionStorage.getItem(adminApiTokenKey);

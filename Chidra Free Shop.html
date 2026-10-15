@@ -516,8 +516,9 @@ const CATS=[
   {icon:"💍",name:"Accessoires",count:30},
 ];
 
-const API_PRODUCTS = 'http://localhost:8080/api/products';
-const API_CHECKOUT = 'http://localhost:8080/api/checkout/orangemoney';
+const API_BASE = 'https://site-web-chidra-free-shop.onrender.com/api';
+const API_PRODUCTS = `${API_BASE}/products`;
+const API_CHECKOUT = `${API_BASE}/checkout/orangemoney`;
 const PRODUCT_IMAGE_FALLBACK = 'hero-boss.jpg';
 const FILTERS = ["Tout","T-shirts","Pantalons","Casquettes","Sneakers","Sacs","Accessoires"];
 const requestedCategory = new URLSearchParams(window.location.search).get('categorie');
@@ -575,7 +576,7 @@ document.getElementById('newsletterSubmit').addEventListener('click',async()=>{
   button.disabled=true;
   status.textContent='Inscription en cours...';
   try{
-    const response=await fetch('http://localhost:8080/api/newsletter/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const response=await fetch(`${API_BASE}/newsletter/subscribe`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
     const data=await response.json();
     status.textContent=data.message||'Inscription enregistrée.';
     if(response.ok)document.getElementById('newsletterForm').reset();
