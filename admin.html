@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - CHIDRA FREE SHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--electric:#1A6BFF;--lime:#C8FF00;--noir:#0A0A0A;--blanc:#FAFAF8;--gris:#1C1C1C;--muted:#888;--radius:12px;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--blanc);color:var(--noir);overflow-x:hidden}
+  nav{background:var(--noir);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:100;border-bottom:1px solid #222;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blanc);letter-spacing:2px}
+  .nav-links{display:flex;gap:1.5rem;list-style:none}
+  .nav-links a{color:#aaa;text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--lime)}
+  .container{padding:2rem;max-width:1200px;margin:0 auto}
+  .page-header{margin-bottom:1.5rem}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:1px;margin-bottom:.5rem}
+  .page-header p{color:var(--muted);line-height:1.7}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:1.5rem}
+  .panel{background:var(--gris);color:#fff;border-radius:20px;padding:1.5rem;border:1px solid #222}
+  .panel h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;margin-bottom:1rem}
+  .product-list{display:grid;gap:1rem}
+  .product-item{background:#121212;border-radius:16px;padding:1rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center}
+  .product-item img{width:72px;height:72px;object-fit:cover;border-radius:14px}
+  .product-meta{display:grid;gap:.25rem}
+  .product-meta span{font-size:.85rem;color:#ccc}
+  .product-actions{display:flex;flex-direction:column;gap:.5rem}
+  .small-btn{background:var(--electric);border:none;color:#fff;padding:.55rem .85rem;border-radius:10px;cursor:pointer;font-size:.8rem;transition:background .2s}
+  .small-btn:hover{background:#1558d0}
+  .delete-btn{background:#ff3d3d}
+  .form-group{display:grid;gap:.4rem;margin-bottom:1rem}
+  .form-group label{font-size:.85rem;color:#ccc}
+  .form-group input,.form-group textarea{width:100%;padding:.85rem 1rem;border-radius:12px;border:1px solid #333;background:#101010;color:#fff;font-family:inherit}
+  .form-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+  .full-btn{background:var(--lime);color:var(--noir);border:none;padding:1rem 1.2rem;border-radius:12px;font-weight:700;cursor:pointer;transition:filter .2s}
+  .full-btn:hover{filter:brightness(1.05)}
+  .status{margin-top:1rem;font-size:.9rem;color:var(--electric)}
+  .footer-link{display:flex;justify-content:center;padding:2rem;color:#aaa;text-decoration:none}
+  .admin-shell{display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start}
+  .admin-sidebar{position:sticky;top:88px;background:#101010;border:1px solid #222;border-radius:18px;padding:.75rem}
+  .admin-tab{width:100%;display:flex;align-items:center;gap:.65rem;border:0;background:transparent;color:#aaa;text-align:left;padding:.8rem;border-radius:10px;font:inherit;cursor:pointer}
+  .admin-tab:hover,.admin-tab.active{background:#242424;color:var(--lime)}
+  .admin-view{display:none}.admin-view.active{display:block}
+  .overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+  .stat-card{background:#121212;border:1px solid #262626;border-radius:16px;padding:1.1rem;color:#fff}.stat-card span{display:block;color:#999;font-size:.78rem;margin-bottom:.5rem}.stat-card strong{font-size:1.7rem}
+  .section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}.section-heading h2{margin:0}
+  .toolbar{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}.toolbar input{max-width:260px}
+  .table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:collapse;color:#eee;font-size:.88rem}.data-table th,.data-table td{padding:.8rem;border-bottom:1px solid #292929;text-align:left;white-space:nowrap}.data-table th{color:#aaa;font-size:.75rem;text-transform:uppercase}
+  .thumb{width:48px;height:48px;object-fit:cover;border-radius:8px;background:#333}.muted{color:#999}.danger{background:#ff3d3d!important}.ghost{background:#444!important}
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.settings-grid .wide{grid-column:1/-1}
+  .empty-state{color:#999;padding:2rem;text-align:center;border:1px dashed #333;border-radius:12px}
+  @media(max-width:768px){.admin-shell{grid-template-columns:1fr}.admin-sidebar{position:static;display:flex;overflow-x:auto}.admin-tab{white-space:nowrap;width:auto}.overview-grid{grid-template-columns:repeat(2,1fr)}.settings-grid{grid-template-columns:1fr}.settings-grid .wide{grid-column:auto}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">CHIDRA FREE SHOP</div>
+  <ul class="nav-links">
+    <li><a href="admin.html" aria-current="page">Dashboard</a></li>
+    <li><a href="compte.html?logout=1">Déconnexion</a></li>
+  </ul>
+</nav>
+<div class="container">
+  <section class="page-header">
+    <h1>Tableau de bord admin</h1>
+    <p>Centre de contrôle de la boutique : catalogue, utilisateurs et contenu du site.</p>
+  </section>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" aria-label="Navigation administration">
+      <button class="admin-tab active" data-view="overview">▦ Vue d'ensemble</button>
+      <button class="admin-tab" data-view="catalogue">▣ Catalogue</button>
+      <button class="admin-tab" data-view="users">♙ Utilisateurs</button>
+      <button class="admin-tab" data-view="newsletter">✉ Newsletter</button>
+      <button class="admin-tab" data-view="settings">⚙ Paramètres</button>
+    </aside>
+    <main>
+      <section class="admin-view active" id="overviewView">
+        <div class="overview-grid">
+          <div class="stat-card"><span>Produits</span><strong id="productTotal">0</strong></div>
+          <div class="stat-card"><span>Images actives</span><strong id="imageTotal">0</strong></div>
+          <div class="stat-card"><span>Utilisateurs</span><strong id="userTotal">0</strong></div>
+          <div class="stat-card"><span>Administrateurs</span><strong id="adminTotal">0</strong></div>
+        </div>
+        <div class="panel"><div class="section-heading"><h2>Activité rapide</h2><span class="muted">Données locales</span></div><p class="muted">Utilise les onglets pour modifier le catalogue, les comptes et les informations visibles sur le site.</p></div>
+      </section>
+      <section class="admin-view" id="catalogueView">
+        <div class="grid">
+          <div class="panel"><div class="section-heading"><h2>Catalogue</h2><button id="refreshBtn" class="small-btn">↻ Actualiser</button></div><div id="productList" class="product-list"></div></div>
+          <div class="panel">
+            <h2>Ajouter / modifier</h2>
+      <div class="form-group"><label for="name">Nom du produit</label><input id="name" type="text" placeholder="Tee Oversize Urban"></div>
+      <div class="form-group"><label for="cat">Catégorie</label><input id="cat" type="text" placeholder="T-shirts"></div>
+      <div class="form-group"><label for="price">Prix (en FCFA)</label><input id="price" type="number" placeholder="12000"></div>
+      <div class="form-group"><label for="oldPrice">Prix ancien (laisser vide si non applicable)</label><input id="oldPrice" type="number" placeholder="15000"></div>
+      <div class="form-group"><label for="imageFile">Image produit</label><input id="imageFile" type="file" accept="image/*"></div>
+      <div class="form-group"><label for="image">URL image (optionnel)</label><input id="image" type="text" placeholder="https://...jpg"></div>
+      <div class="form-group is-hidden" id="imagePreviewContainer"><label>Prévisualisation</label><img id="imagePreview" src="about:blank" alt="Aperçu"></div>
+      <div class="form-group"><label for="badge">Badge</label><input id="badge" type="text" placeholder="NEW ou SOLDE"></div>
+      <div class="form-group"><label for="badgeType">Type de badge</label><input id="badgeType" type="text" placeholder="new ou sale"></div>
+      <div class="form-actions">
+        <button id="saveBtn" class="full-btn">Enregistrer</button>
+        <button id="clearBtn" class="small-btn">Réinitialiser</button>
+      </div>
+      <div id="status" class="status"></div>
+          </div>
+        </div>
+      </section>
+      <section class="admin-view" id="usersView">
+        <div class="panel"><div class="section-heading"><h2>Utilisateurs</h2><button id="refreshUsersBtn" class="small-btn">↻ Actualiser</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Action</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
+      </section>
+      <section class="admin-view" id="newsletterView">
+        <div class="panel"><div class="section-heading"><h2>Abonnés newsletter</h2><button id="refreshNewsletterBtn" class="small-btn">↻ Actualiser</button></div><p class="muted">Les abonnés recevront les nouveautés produits via Brevo.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Email</th><th>Action</th></tr></thead><tbody id="newsletterTable"></tbody></table></div><div id="newsletterStatus" class="status"></div></div>
+      </section>
+      <section class="admin-view" id="settingsView">
+        <div class="panel"><div class="section-heading"><h2>Paramètres du site</h2><span class="muted">Enregistrés dans ce navigateur</span></div>
+          <div class="settings-grid">
+            <div class="form-group"><label for="siteName">Nom de la boutique</label><input id="siteName" type="text"></div>
+            <div class="form-group"><label for="siteSlogan">Slogan</label><input id="siteSlogan" type="text"></div>
+            <div class="form-group"><label for="sitePhone">Téléphone</label><input id="sitePhone" type="text"></div>
+            <div class="form-group"><label for="siteEmail">Email</label><input id="siteEmail" type="email"></div>
+            <div class="form-group wide"><label for="siteDescription">Description courte</label><textarea id="siteDescription" rows="4"></textarea></div>
+          </div>
+          <button id="saveSettingsBtn" class="full-btn">Enregistrer les paramètres</button><div id="settingsStatus" class="status"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="footer-link">Espace administration Chidra Free Shop</div>
+<script src="common.js"></script>
+<script>
+  const publicApiBase = 'http://localhost:8080/api/products';
+  const adminApiBase = 'http://localhost:8080/api/admin/products';
+  const productList = document.getElementById('productList');
+  const saveBtn = document.getElementById('saveBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const status = document.getElementById('status');
+  const imageFileInput = document.getElementById('imageFile');
+  const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  const imagePreview = document.getElementById('imagePreview');
+  const usersTable = document.getElementById('usersTable');
+  const settingsStatus = document.getElementById('settingsStatus');
+  const newsletterTable = document.getElementById('newsletterTable');
+  const newsletterStatus = document.getElementById('newsletterStatus');
+  const fields = ['name','cat','price','oldPrice','image','badge','badgeType'];
+  let editingId = null;
+  let uploadedImageBase64 = null;
+  let products = [];
+  const newsletterApiBase = 'http://localhost:8080/api/newsletter';
+
+  function setProductImageFallback(image) {
+    image.addEventListener('error', () => {
+      if (image.dataset.fallbackApplied) return;
+      image.dataset.fallbackApplied = 'true';
+      image.src = 'hero-boss.jpg';
+    });
+    if (!image.getAttribute('src')) image.src = 'hero-boss.jpg';
+  }
+
+  function updateDashboardStats() {
+    document.getElementById('productTotal').textContent = products.length;
+    document.getElementById('imageTotal').textContent = products.filter(product => product.image).length;
+    const users = getStoredUsers();
+    document.getElementById('userTotal').textContent = users.length;
+    document.getElementById('adminTotal').textContent = users.filter(user => user.role === 'admin').length;
+  }
+
+  function renderUsers() {
+    const users = getStoredUsers();
+    usersTable.innerHTML = users.length ? users.map((user, index) => `
+      <tr><td>${user.name || 'Sans nom'}</td><td>${user.email}</td><td>${user.role || 'customer'}</td>
+      <td><button class="small-btn ${user.role === 'admin' ? 'ghost' : ''}" onclick="toggleUserRole(${index})">${user.role === 'admin' ? 'Rendre client' : 'Rendre admin'}</button>
+      <button class="small-btn danger" onclick="deleteUser(${index})" ${user.email === 'admin@chidra.com' ? 'disabled title="Compte principal protégé"' : ''}>Supprimer</button></td></tr>
+    `).join('') : '<tr><td colspan="4" class="muted">Aucun utilisateur enregistré.</td></tr>';
+  }
+
+  async function renderNewsletter() {
+    try {
+      const response = await fetch(`${newsletterApiBase}/admin/subscribers`);
+      if (!response.ok) throw new Error('newsletter');
+      const subscribers = await response.json();
+      newsletterTable.innerHTML = subscribers.length ? subscribers.map(subscriber => `
+        <tr><td>${subscriber.email}</td><td><button class="small-btn danger" onclick="removeSubscriber('${subscriber.email}')">Supprimer</button></td></tr>
+      `).join('') : '<tr><td colspan="2" class="muted">Aucun abonné pour le moment.</td></tr>';
+      newsletterStatus.textContent = `${subscribers.length} abonné(s)`;
+    } catch (error) {
+      newsletterTable.innerHTML = '<tr><td colspan="2" class="muted">Backend newsletter indisponible.</td></tr>';
+    }
+  }
+
+  async function removeSubscriber(email) {
+    if (!confirm(`Retirer ${email} de la newsletter ?`)) return;
+    const response = await fetch(`${newsletterApiBase}/admin/subscribers?email=${encodeURIComponent(email)}`, {method: 'DELETE'});
+    newsletterStatus.textContent = response.ok ? 'Abonné retiré.' : 'Impossible de retirer cet abonné.';
+    if (response.ok) renderNewsletter();
+  }
+
+  function loadSettings() {
+    const defaults = { name: 'CHIDRA FREE SHOP', slogan: "L'habilleur des grands hommes", phone: '+226 06 46 21 64', email: 'nacanaboprinceabdoulrachid@gmail.com', description: 'Une mode masculine africaine, moderne et ambitieuse.' };
+    const settings = { ...defaults, ...JSON.parse(localStorage.getItem('siteSettings') || '{}') };
+    Object.entries(settings).forEach(([key, value]) => {
+      const field = document.getElementById(`site${key[0].toUpperCase()}${key.slice(1)}`);
+      if (field) field.value = value;
+    });
+  }
+
+  function toggleUserRole(index) {
+    const users = getStoredUsers();
+    if (!users[index]) return;
+    users[index].role = users[index].role === 'admin' ? 'customer' : 'admin';
+    saveStoredUsers(users); renderUsers(); updateDashboardStats();
+  }
+
+  function deleteUser(index) {
+    const users = getStoredUsers();
+    if (!users[index] || users[index].email === 'admin@chidra.com' || !confirm(`Supprimer ${users[index].email} ?`)) return;
+    if (getCurrentUser()?.email === users[index].email) logoutCurrentUser();
+    users.splice(index, 1); saveStoredUsers(users); renderUsers(); updateDashboardStats();
+  }
+
+  document.querySelectorAll('.admin-tab').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('.admin-tab').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.admin-view').forEach(view => view.classList.remove('active'));
+    tab.classList.add('active'); document.getElementById(`${tab.dataset.view}View`).classList.add('active');
+  }));
+
+  function buildBody() {
+    const data = {};
+    fields.forEach(key => { const el = document.getElementById(key); data[key] = el.value || null; });
+    if (uploadedImageBase64) {
+      data.image = uploadedImageBase64;
+    }
+    data.price = Number(data.price) || 0;
+    data.oldPrice = data.oldPrice ? Number(data.oldPrice) : null;
+    return data;
+  }
+
+  imageFileInput.addEventListener('change', () => {
+    const file = imageFileInput.files[0];
+    if (!file) {
+      uploadedImageBase64 = null;
+      imagePreviewContainer.classList.add('is-hidden');
+      imagePreview.src = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      uploadedImageBase64 = reader.result;
+      imagePreview.src = uploadedImageBase64;
+      imagePreviewContainer.classList.remove('is-hidden');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function clearForm() {
+    fields.forEach(key => document.getElementById(key).value = '');
+    uploadedImageBase64 = null;
+    imageFileInput.value = '';
+    imagePreview.src = 'about:blank';
+    imagePreviewContainer.classList.add('is-hidden');
+    editingId = null;
+    saveBtn.textContent = 'Enregistrer';
+    status.textContent = '';
+  }
+
+  async function fetchProducts() {
+    const res = await fetch(publicApiBase);
+    products = await res.json();
+    updateDashboardStats();
+    productList.innerHTML = products.map(product => `
+      <div class="product-item">
+        <img src="${product.image || 'hero-boss.jpg'}" alt="${product.name}">
+        <div class="product-meta">
+          <strong>${product.name}</strong>
+          <span>${product.cat} · ${product.price} FCFA</span>
+        </div>
+        <div class="product-actions">
+          <button class="small-btn" onclick="editProduct(${product.id})">Modifier</button>
+          <button class="small-btn ghost" onclick="removeProductImage(${product.id})" ${product.image ? '' : 'disabled'}>Supprimer l’image</button>
+          <button class="small-btn delete-btn" onclick="deleteProduct(${product.id})">Supprimer</button>
+        </div>
+      </div>
+    `).join('');
+    productList.querySelectorAll('img').forEach(setProductImageFallback);
+  }
+
+  async function removeProductImage(id) {
+    const product = products.find(item => item.id === id);
+    if (!product || !product.image || !confirm(`Supprimer l’image de ${product.name} ?`)) return;
+    const response = await fetch(`${adminApiBase}/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({...product, image: null}) });
+    status.textContent = response.ok ? 'Image supprimée. Le produit est conservé.' : 'Impossible de supprimer cette image.';
+    if (response.ok) fetchProducts();
+  }
+
+  async function editProduct(id) {
+    const res = await fetch(`${publicApiBase}/${id}`);
+    if (!res.ok) return;
+    const product = await res.json();
+    uploadedImageBase64 = null;
+    imageFileInput.value = '';
+    fields.forEach(key => document.getElementById(key).value = product[key] || '');
+    imagePreview.src = product.image || 'about:blank';
+    imagePreviewContainer.classList.toggle('is-hidden', !product.image);
+    editingId = product.id;
+    saveBtn.textContent = 'Mettre à jour';
+    status.textContent = 'Modification en cours';
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('Supprimer ce produit ?')) return;
+    await fetch(`${adminApiBase}/${id}`, { method:'DELETE' });
+    status.textContent = 'Produit supprimé.';
+    fetchProducts();
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    const body = buildBody();
+    const method = editingId ? 'PUT' : 'POST';
+    const url = editingId ? `${adminApiBase}/${editingId}` : adminApiBase;
+    try {
+      const res = await fetch(url, {
+        method,
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const contentType = res.headers.get('Content-Type') || '';
+        let message = 'Erreur lors de la sauvegarde.';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          message = data.message || message;
+        } else {
+          const text = await res.text();
+          if (text) message = `${message} ${text}`;
+        }
+        status.textContent = message;
+        return;
+      }
+      const verb = editingId ? 'mis à jour' : 'ajouté';
+      clearForm();
+      status.textContent = `Produit ${verb} avec succès.`;
+      await fetchProducts();
+    } catch (error) {
+      status.textContent = 'Serveur inaccessible. Vérifie que le backend est lancé.';
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  clearBtn.addEventListener('click', clearForm);
+  document.getElementById('refreshBtn').addEventListener('click', fetchProducts);
+  document.getElementById('refreshUsersBtn').addEventListener('click', renderUsers);
+  document.getElementById('refreshNewsletterBtn').addEventListener('click', renderNewsletter);
+  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+    const settings = {name: siteName.value.trim(), slogan: siteSlogan.value.trim(), phone: sitePhone.value.trim(), email: siteEmail.value.trim(), description: siteDescription.value.trim()};
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    settingsStatus.textContent = 'Paramètres enregistrés pour ce navigateur.';
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    updateNavVisibility();
+    enforceAdminAccess();
+    renderUsers();
+    renderNewsletter();
+    loadSettings();
+    fetchProducts();
+  });
+</script>
+</body>
+</html>

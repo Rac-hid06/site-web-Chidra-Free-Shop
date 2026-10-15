@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHIDRA FREE SHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --electric:#1A6BFF;
+    --lime:#C8FF00;
+    --noir:#0A0A0A;
+    --blanc:#FAFAF8;
+    --gris:#1C1C1C;
+    --gris2:#2A2A2A;
+    --muted:#888;
+    --radius:12px;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--blanc);color:var(--noir);overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  body{perspective:1200px}
+  ::selection{background:var(--lime);color:var(--noir)}
+
+  /* NAV */
+  nav{
+    background:var(--noir);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 2rem;height:64px;position:sticky;top:0;z-index:100;
+    border-bottom:1px solid #222;
+  }
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blanc);letter-spacing:2px}
+  .logo span{color:var(--lime)}
+  .nav-links{display:flex;gap:2rem;list-style:none}
+  .nav-links a{color:#aaa;text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--lime)}
+  .nav-right{display:flex;align-items:center;gap:1rem}
+  .cart-btn{
+    background:var(--electric);color:#fff;border:none;padding:.5rem 1.2rem;
+    border-radius:8px;font-family:inherit;font-size:.85rem;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:background .2s;
+  }
+  .cart-btn:hover{background:#1558d0}
+  .cart-count{
+    background:var(--lime);color:var(--noir);border-radius:999px;
+    font-size:.7rem;font-weight:700;padding:2px 6px;min-width:18px;text-align:center;
+  }
+
+  /* HERO */
+  .hero{
+    background:var(--noir);
+    min-height:520px;display:flex;align-items:center;
+    padding:4rem 2rem;position:relative;overflow:hidden;isolation:isolate;
+  }
+  .hero-bg{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 60% 80% at 80% 50%,#1A6BFF22 0%,transparent 70%),
+               radial-gradient(ellipse 40% 60% at 20% 80%,#C8FF0018 0%,transparent 60%);
+  }
+  .hero-content{position:relative;max-width:560px;z-index:1}
+  .hero-content{animation:hero-enter .9s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes hero-enter{from{opacity:0;transform:translateY(28px) rotateX(5deg)}to{opacity:1;transform:translateY(0) rotateX(0)}}
+  .hero-eyebrow{
+    display:inline-block;background:var(--lime);color:var(--noir);
+    font-size:.7rem;font-weight:700;letter-spacing:2px;padding:4px 12px;
+    border-radius:4px;margin-bottom:1.2rem;text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:.95;
+    color:var(--blanc);margin-bottom:1.2rem;letter-spacing:1px;
+  }
+  .hero h1 em{color:var(--electric);font-style:normal}
+  .hero p{color:#aaa;font-size:1rem;line-height:1.6;margin-bottom:2rem;max-width:400px}
+  .hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+  .btn-primary{
+    background:var(--electric);color:#fff;border:none;padding:.9rem 2rem;
+    border-radius:10px;font-family:inherit;font-size:.95rem;font-weight:700;
+    cursor:pointer;letter-spacing:.3px;transition:all .2s;
+  }
+  .btn-primary:hover{background:#1558d0;transform:translateY(-1px)}
+  .btn-outline{
+    background:transparent;color:var(--blanc);border:1.5px solid #444;
+    padding:.9rem 2rem;border-radius:10px;font-family:inherit;font-size:.95rem;
+    font-weight:600;cursor:pointer;transition:all .2s;
+  }
+  .btn-outline:hover{border-color:var(--lime);color:var(--lime)}
+  .hero-stats{
+    display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2rem;
+    border-top:1px solid #222;
+  }
+  .stat-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--blanc);display:block}
+  .stat-label{font-size:.75rem;color:var(--muted);letter-spacing:.5px}
+
+  /* TICKER */
+  .ticker{
+    background:var(--electric);padding:.6rem 0;overflow:hidden;
+    display:flex;white-space:nowrap;
+  }
+  .ticker-inner{
+    display:flex;gap:3rem;animation:tick 20s linear infinite;
+    font-size:.8rem;font-weight:700;letter-spacing:1px;color:#fff;
+    text-transform:uppercase;
+  }
+  @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ticker-dot{color:var(--lime)}
+
+  /* SECTIONS */
+  section{padding:clamp(3rem,5vw,5rem) 2rem;position:relative}
+  .cats,.products,.promo{border-radius:28px 28px 0 0;position:relative;transform:translateZ(0)}
+  .scroll-reveal{opacity:0;transform:translateY(38px) scale(.98);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+  .scroll-reveal.is-visible{opacity:1;transform:translateY(0) scale(1)}
+  @keyframes section-reveal{from{opacity:0;transform:translateY(38px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .section-label{
+    font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:var(--electric);margin-bottom:.5rem;
+  }
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;margin-bottom:.5rem;letter-spacing:1px}
+  .section-sub{color:var(--muted);font-size:.9rem;margin-bottom:2.5rem}
+
+  /* CATEGORIES */
+  .cats{background:var(--blanc);padding-bottom:3rem}
+  .cats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem}
+  .cat-card{
+    background:var(--gris);border-radius:var(--radius);padding:1.35rem 1rem;
+    text-align:center;cursor:pointer;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .2s,background .2s; border:1.5px solid transparent;transform:translateZ(0);
+  }
+  .cat-card:hover{border-color:var(--electric);transform:translateY(-8px) rotateX(4deg) rotateY(-3deg);box-shadow:0 18px 30px rgba(10,10,10,.14)}
+  .cat-card.active{border-color:var(--lime);background:#1a1a0a}
+  .cat-icon{font-size:2rem;margin-bottom:.6rem}
+  .cat-name{color:var(--blanc);font-size:.85rem;font-weight:600;letter-spacing:.3px}
+  .cat-count{color:var(--muted);font-size:.7rem;margin-top:.2rem}
+
+  /* PRODUCTS */
+  .products{background:#f5f5f3;padding-top:3.5rem}
+  .products-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+  .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap}
+  .filter-btn{
+    background:var(--blanc);border:1px solid #ddd;padding:.4rem .9rem;
+    border-radius:999px;font-family:inherit;font-size:.78rem;font-weight:500;
+    cursor:pointer;transition:all .2s;
+  }
+  .filter-btn.active,.filter-btn:hover{background:var(--noir);color:#fff;border-color:var(--noir)}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem}
+  .product-card{
+    background:var(--blanc);border-radius:var(--radius);overflow:hidden;
+    border:1px solid #e8e8e8;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s,border-color .25s;cursor:pointer;transform:translateZ(0);will-change:transform;
+  }
+  .product-card:hover{transform:translateY(-10px) rotateX(2deg) rotateY(-2deg);box-shadow:0 24px 45px rgba(0,0,0,.16);border-color:#cfcfc9}
+  .product-img{
+    height:220px;position:relative;overflow:hidden;background:#f5f5f3;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .product-img img{
+    width:100%;height:100%;object-fit:cover;
+    display:block;border-radius:0;
+  }
+  .product-badge{
+    position:absolute;top:10px;left:10px;
+    background:var(--electric);color:#fff;
+    font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;
+  }
+  .product-badge.new{background:var(--lime);color:var(--noir)}
+  .product-badge.sale{background:#ff3d3d}
+  .product-info{padding:1rem}
+  .product-name{font-weight:600;font-size:.95rem;margin-bottom:.3rem}
+  .product-cat{color:var(--muted);font-size:.75rem;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.5px}
+  .product-bottom{display:flex;align-items:center;justify-content:space-between}
+  .product-price{font-weight:700;font-size:1.05rem;color:var(--electric)}
+  .product-price .old{color:var(--muted);text-decoration:line-through;font-size:.8rem;font-weight:400;margin-left:.3rem}
+  .add-btn{
+    background:var(--noir);color:#fff;border:none;width:34px;height:34px;
+    border-radius:8px;cursor:pointer;font-size:1.1rem;
+    display:flex;align-items:center;justify-content:center;transition:background .2s;
+  }
+  .add-btn:hover{background:var(--electric)}
+  .added{background:var(--electric) !important;animation:pop .3s ease}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+  /* PROMO BANNER */
+  .promo{
+    background:var(--noir);display:flex;align-items:center;justify-content:space-between;
+    padding:clamp(3rem,7vw,6rem) 2rem;gap:2rem;flex-wrap:wrap;overflow:hidden;
+  }
+  .promo::before{content:'';position:absolute;width:420px;height:420px;right:-150px;top:-180px;border:1px solid #ffffff18;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05;transform:rotate(18deg)}
+  .promo-text h2{
+    font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--blanc);letter-spacing:1px;
+    line-height:1;
+  }
+  .promo-text h2 span{color:var(--lime)}
+  .promo-text p{color:#aaa;margin-top:.5rem;font-size:.9rem}
+  .promo-code{
+    background:var(--gris2);border:1.5px dashed #444;border-radius:10px;
+    padding:1.2rem 2rem;text-align:center;
+  }
+  .promo-code-label{color:var(--muted);font-size:.7rem;letter-spacing:1px;margin-bottom:.3rem;text-transform:uppercase}
+  .promo-code-val{
+    font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--lime);letter-spacing:4px;
+  }
+  .promo-code-info{color:#555;font-size:.72rem;margin-top:.2rem}
+
+  /* CART DRAWER */
+  .cart-overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;
+    align-items:flex-start;justify-content:flex-end;
+  }
+  .cart-overlay.open{display:flex}
+  .cart-drawer{
+    background:var(--blanc);width:380px;max-width:100vw;height:100vh;
+    overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;
+  }
+  .cart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+  .cart-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px}
+  .close-btn{
+    background:var(--gris);color:#fff;border:none;width:32px;height:32px;
+    border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;
+  }
+  .cart-empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+  .cart-empty-hint{font-size:.8rem;margin-top:.3rem;color:#aaa}
+  .cart-empty-icon{font-size:3rem;margin-bottom:1rem}
+  .cart-items{flex:1}
+  .cart-item{
+    display:flex;gap:1rem;padding:1rem 0;
+    border-bottom:1px solid #eee;align-items:center;
+  }
+  .cart-item-img{
+    width:56px;height:56px;background:var(--gris);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;
+  }
+  .cart-item-img img{
+    width:100%;height:100%;object-fit:cover;
+  }
+  .cart-item-info{flex:1}
+  .cart-item-name{font-weight:600;font-size:.9rem;margin-bottom:.2rem}
+  .cart-item-price{color:var(--electric);font-weight:700;font-size:.88rem}
+  .cart-item-qty{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+  .qty-btn{
+    background:#f0f0f0;border:none;width:22px;height:22px;border-radius:4px;
+    cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;
+  }
+  .qty-val{font-size:.85rem;font-weight:600;min-width:16px;text-align:center}
+  .remove-item{background:none;border:none;cursor:pointer;color:#ccc;font-size:.9rem;padding:.2rem;transition:color .2s}
+  .remove-item:hover{color:#ff3d3d}
+  .cart-footer{border-top:1.5px solid #eee;padding-top:1.5rem;margin-top:.5rem}
+  .cart-total{display:flex;justify-content:space-between;margin-bottom:1rem;font-size:1.1rem;font-weight:700}
+  .cart-total-value{color:var(--electric)}
+  .checkout-btn{
+    width:100%;background:var(--electric);color:#fff;border:none;padding:1rem;
+    border-radius:10px;font-family:inherit;font-size:1rem;font-weight:700;
+    cursor:pointer;transition:background .2s;
+  }
+  .checkout-btn:hover{background:#1558d0}
+  .checkout-details{margin:1rem 0;display:grid;gap:1rem}
+  .checkout-details label{display:block;font-size:.82rem;color:#888;margin-bottom:.35rem}
+  .checkout-details input,
+  .checkout-details select{width:100%;padding:.8rem 1rem;border-radius:10px;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit}
+  .cart-secure{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.8rem;color:var(--muted);font-size:.75rem}
+
+  /* FOOTER */
+  footer{
+    background:var(--noir);color:#aaa;padding:3rem 2rem 1.5rem;
+  }
+  .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;margin-bottom:2rem}
+  .footer-brand .logo{display:block;margin-bottom:.8rem}
+  .footer-brand p{font-size:.82rem;line-height:1.6;color:#666;max-width:340px}
+  .footer-col h4{color:var(--blanc);font-size:.82rem;font-weight:700;letter-spacing:.5px;margin-bottom:.8rem;text-transform:uppercase}
+  .footer-col a{display:block;color:#666;font-size:.82rem;text-decoration:none;margin-bottom:.4rem;transition:color .2s}
+  .footer-contact a{overflow-wrap:anywhere}
+  .footer-col a:hover{color:var(--lime)}
+  .footer-bottom{border-top:1px solid #222;padding-top:1.2rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.75rem;color:#555}
+  .social-links{display:flex;gap:.8rem}
+  .footer-social{margin-top:1rem}
+  .promo-signup{align-self:center}
+  .newsletter-form{display:grid;gap:.55rem;min-width:min(100%,340px)}
+  .newsletter-form label{color:#aaa;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+  .newsletter-form div{display:flex;gap:.55rem}.newsletter-form input{min-width:0;flex:1;padding:.9rem 1rem;border:1px solid #444;border-radius:10px;background:#1c1c1c;color:#fff;font:inherit}.newsletter-form small{min-height:1rem;color:var(--lime)}
+  @media(max-width:520px){.newsletter-form div{flex-direction:column}.newsletter-form button{width:100%}}
+  .is-hidden{display:none}
+  .social-link{
+    background:var(--gris2);color:#aaa;width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:.8rem;
+    text-decoration:none;transition:all .2s;
+  }
+  .social-link:hover{background:var(--electric);color:#fff}
+  .social-link i{font-size:1rem}
+
+  /* TOAST */
+  .toast{
+    position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--noir);color:#fff;padding:.7rem 1.5rem;border-radius:10px;
+    font-size:.85rem;font-weight:600;z-index:300;transition:transform .3s ease;
+    border-left:4px solid var(--lime);white-space:nowrap;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  button,a{ -webkit-tap-highlight-color:transparent }
+  button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .nav-links{display:none}
+    .hero h1{font-size:3.5rem}
+    .hero-stats{gap:1.5rem}
+    .promo{flex-direction:column;text-align:center}
+    .products-header{flex-direction:column;align-items:flex-start}
+    section{padding-left:1.25rem;padding-right:1.25rem}
+    .hero{padding-left:1.25rem;padding-right:1.25rem}
+    .hero-cta .btn-primary,.hero-cta .btn-outline{width:100%;text-align:center}
+    .cats,.products,.promo{border-radius:0}
+  }
+  @media(max-width:480px){
+    .hero{min-height:600px}
+    .hero h1{font-size:clamp(3rem,16vw,4rem)}
+    .cart-drawer{width:100%;padding:1rem}
+    .promo{padding-left:1.25rem;padding-right:1.25rem}
+  }
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+  .payment-modal{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:400;
+    align-items:center;justify-content:center;padding:1rem;
+  }
+  .payment-modal.open{display:flex}
+  .payment-card{
+    background:var(--blanc);border-radius:18px;padding:2rem;max-width:420px;width:100%;position:relative;
+    box-shadow:0 26px 60px rgba(0,0,0,.25);text-align:center;
+  }
+  .payment-card h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:1rem;color:var(--noir)}
+  .payment-card p{color:#555;line-height:1.7;margin-bottom:1.5rem}
+  .payment-card .close-btn{position:absolute;top:1rem;right:1rem;background:var(--gris);color:#fff;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">CHIDRA FREE SHOP</div>
+  <ul class="nav-links">
+    <li><a href="Chidra Free Shop.html">Accueil</a></li>
+    <li><a href="collections.html">Collections</a></li>
+    <li><a href="nouveautes.html">Nouveautés</a></li>
+    <li><a href="apropos.html">À propos</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li id="adminNavItem" class="is-hidden"><a href="admin.html">Admin</a></li>
+    <li><a id="accountNavLink" href="compte.html">Compte</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="toggleCart()">
+      🛍️ Panier <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">✦ Nouvelle collection 2026</span>
+    <h1>STYLE<br><em>SANS</em><br>LIMITE</h1>
+    <p><strong>L'habilleur des grands hommes.</strong> Des pièces sélectionnées pour l'homme ambitieux de l'Afrique moderne.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="scrollProducts()">Découvrir la collection</button>
+      <a class="btn-outline" href="services.html">Nos services →</a>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-val">500+</span><span class="stat-label">Pièces disponibles</span></div>
+      <div><span class="stat-val">2K+</span><span class="stat-label">Clients satisfaits</span></div>
+      <div><span class="stat-val">BF</span><span class="stat-label">Livraison Ouaga</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<!-- CATÉGORIES -->
+<section class="cats">
+  <div class="section-label">Explorer par style</div>
+  <div class="section-title">Les Collections</div>
+  <div class="cats-grid" id="catsGrid"></div>
+</section>
+
+<!-- PRODUITS -->
+<section class="products" id="productsSection">
+  <div class="products-header">
+    <div>
+      <div class="section-label">Catalogue</div>
+      <div class="section-title">Nos Articles</div>
+      <div class="section-sub">Sélection premium pour le style urbain</div>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- PROMO BANNER -->
+<section class="promo" id="promoSection">
+  <div class="promo-text">
+    <h2>-20% SUR<br>VOTRE 1ÈRE<br><span>COMMANDE</span></h2>
+    <p>Inscris-toi et reçois ton code exclusif</p>
+  </div>
+  <div class="promo-code">
+    <div class="promo-code-label">Votre code promo</div>
+    <div class="promo-code-val">CHIDRA20</div>
+    <div class="promo-code-info">Valable sur toute la boutique</div>
+  </div>
+  <form class="newsletter-form" id="newsletterForm" novalidate>
+    <label for="newsletterEmail">Recevoir les nouveautés</label>
+    <div><input id="newsletterEmail" type="email" placeholder="ton@email.com"><button class="btn-primary" id="newsletterSubmit" type="button">S'inscrire</button></div>
+    <small id="newsletterStatus" aria-live="polite"></small>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">CHIDRA FREE SHOP</span>
+      <p>L'habilleur des grands hommes. Une mode masculine africaine, moderne et ambitieuse.</p>
+      <div class="social-links footer-social">
+        <a class="social-link" href="https://www.tiktok.com/@chidrafreeshop1" target="_blank" rel="noopener noreferrer" aria-label="TikTok Chidra Free Shop"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+        <a class="social-link" href="https://www.instagram.com/chidra.free.shop/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Chidra Free Shop"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+        <a class="social-link" href="https://www.facebook.com/chidra.fsf" target="_blank" rel="noopener noreferrer" aria-label="Facebook Chidra Free Shop"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Boutique</h4>
+      <a href="nouveautes.html">Nouveautés</a>
+      <a href="Chidra Free Shop.html?categorie=T-shirts#productsSection">T-shirts</a>
+      <a href="Chidra Free Shop.html?categorie=Pantalons#productsSection">Pantalons</a>
+      <a href="Chidra Free Shop.html?categorie=Accessoires#productsSection">Accessoires</a>
+      <a href="Chidra Free Shop.html#promoSection">Promotions</a>
+    </div>
+    <div class="footer-col footer-contact">
+      <h4>Aide</h4>
+      <a href="compte.html">Mon compte</a>
+      <a href="compte.html">Mes commandes</a>
+      <a href="services.html">Livraison</a>
+      <a href="services.html">Retours</a>
+      <a href="mailto:nacanaboprinceabdoulrachid@gmail.com">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="https://www.google.com/maps/search/Ouagadougou" target="_blank" rel="noopener noreferrer">📍 Ouagadougou, BF</a>
+      <a href="tel:+22606462164">📱 +226 06 46 21 64</a>
+      <a href="mailto:nacanaboprinceabdoulrachid@gmail.com">✉️ nacanaboprinceabdoulrachid@gmail.com</a>
+      <a href="https://www.instagram.com/chidra.free.shop/" target="_blank" rel="noopener noreferrer">@chidra.free.shop</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="currentYear"></span> Chidra Free Shop. Tous droits réservés.</span>
+    <span>Paiement sécurisé via Orange Money</span>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartOutside(event)">
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">Mon Panier</div>
+      <button class="close-btn" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛍️</div>
+        <div>Ton panier est vide</div>
+        <div class="cart-empty-hint">Ajoute des articles pour commencer</div>
+      </div>
+    </div>
+    <div class="checkout-details is-hidden" id="checkoutDetails">
+      <label for="deliveryChoice">Mode de livraison</label>
+      <select id="deliveryChoice">
+        <option value="standard">Standard (+1500 FCFA)</option>
+        <option value="express">Express (+2500 FCFA)</option>
+        <option value="pickup">Retrait en boutique (0 FCFA)</option>
+      </select>
+      <label for="customerAddress">Adresse de livraison</label>
+      <input id="customerAddress" type="text" placeholder="Rue, Quartier, Ville">
+      <label for="customerPhone">Téléphone</label>
+      <input id="customerPhone" type="tel" placeholder="+226 06 00 00 00">
+    </div>
+    <div class="cart-footer is-hidden" id="cartFooter">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal" class="cart-total-value">0 FCFA</span>
+      </div>
+      <button class="checkout-btn" onclick="orangeMoneyCheckout()">Passer la commande →</button>
+      <div class="cart-secure">🔒 Paiement sécurisé via Orange Money</div>
+    </div>
+  </div>
+</div>
+
+<div class="payment-modal" id="paymentModal">
+  <div class="payment-card">
+    <button class="close-btn" onclick="closePaymentModal()">✕</button>
+    <h3>Paiement Orange Money</h3>
+    <p id="paymentModalMessage">Nous préparons ta transaction Orange Money. Si le serveur n'est pas disponible, vérifie que le backend Spring Boot est lancé.</p>
+    <button class="btn-primary" onclick="closePaymentModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<script src="common.js"></script>
+<script>
+const CATS=[
+  {icon:"👕",name:"T-shirts",count:48},
+  {icon:"👖",name:"Pantalons",count:32},
+  {icon:"🧢",name:"Casquettes",count:24},
+  {icon:"👟",name:"Sneakers",count:18},
+  {icon:"👜",name:"Sacs",count:15},
+  {icon:"💍",name:"Accessoires",count:30},
+];
+
+const API_PRODUCTS = 'http://localhost:8080/api/products';
+const API_CHECKOUT = 'http://localhost:8080/api/checkout/orangemoney';
+const PRODUCT_IMAGE_FALLBACK = 'hero-boss.jpg';
+const FILTERS = ["Tout","T-shirts","Pantalons","Casquettes","Sneakers","Sacs","Accessoires"];
+const requestedCategory = new URLSearchParams(window.location.search).get('categorie');
+let activeFilter = FILTERS.includes(requestedCategory) ? requestedCategory : 'Tout';
+function loadCart(){
+  try{
+    const stored = JSON.parse(localStorage.getItem('chidraCart') || '[]');
+    return Array.isArray(stored) ? stored.filter(item => item && item.id && item.qty > 0) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveCart(){
+  localStorage.setItem('chidraCart', JSON.stringify(cart));
+}
+
+let cart = loadCart();
+
+function fmt(n){return n.toLocaleString('fr-FR')+' FCFA'}
+
+function setImageFallback(image){
+  image.addEventListener('error',()=>{
+    if(image.dataset.fallbackApplied)return;
+    image.dataset.fallbackApplied='true';
+    image.src=PRODUCT_IMAGE_FALLBACK;
+  });
+  if(!image.getAttribute('src'))image.src=PRODUCT_IMAGE_FALLBACK;
+}
+
+let PRODUCTS=[
+  {id:1,name:"Tee Oversize Urban",cat:"T-shirts",price:9500,image:"WhatsApp Image 2026-06-13 at 18.24.21.jpeg",badge:"NEW",badgeType:"new"},
+  {id:2,name:"Cargo Street Premium",cat:"Pantalons",price:18500,oldPrice:22000,image:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",badge:"SOLDE",badgeType:"sale"},
+  {id:3,name:"Cap Chidra Signature",cat:"Casquettes",price:6500,image:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=800&q=80",badge:null},
+  {id:4,name:"Hoodie Essentiel Noir",cat:"T-shirts",price:14500,image:"https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=800&q=80",badge:"NEW",badgeType:"new"},
+  {id:5,name:"Sneaker Low Runner",cat:"Sneakers",price:27000,oldPrice:32000,image:"https://images.unsplash.com/photo-1519741497447-200d45c9917c?auto=format&fit=crop&w=800&q=80",badge:"SOLDE",badgeType:"sale"},
+  {id:6,name:"Tote Bag Chidra",cat:"Sacs",price:5500,image:"https://images.unsplash.com/photo-1520962919198-7bc58add9ca6?auto=format&fit=crop&w=800&q=80",badge:null},
+  {id:7,name:"Polo Élégance BF",cat:"T-shirts",price:11000,image:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",badge:"NEW",badgeType:"new"},
+  {id:8,name:"Jean Slim Urbain",cat:"Pantalons",price:16000,image:"https://images.unsplash.com/photo-1495121605193-b116b5b9c5d6?auto=format&fit=crop&w=800&q=80",badge:null},
+];
+
+const tickItems=["Livraison Ouagadougou","Style Urbain Africain","Qualité Premium","Paiement CinetPay","Nouvelle Collection 2026","Free Shop BF"];
+const t=document.getElementById('ticker');
+const inner=[...tickItems,...tickItems].map(i=>`<span>${i}</span><span class="ticker-dot">✦</span>`).join('');
+t.innerHTML=inner+inner;
+
+document.getElementById('newsletterSubmit').addEventListener('click',async()=>{
+  const email=document.getElementById('newsletterEmail').value.trim();
+  const status=document.getElementById('newsletterStatus');
+  const button=document.getElementById('newsletterSubmit');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    status.textContent='Entre une adresse email valide.';
+    return;
+  }
+  button.disabled=true;
+  status.textContent='Inscription en cours...';
+  try{
+    const response=await fetch('http://localhost:8080/api/newsletter/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await response.json();
+    status.textContent=data.message||'Inscription enregistrée.';
+    if(response.ok)document.getElementById('newsletterForm').reset();
+  }catch(error){status.textContent='Serveur indisponible. Réessaie plus tard.';}
+  finally{button.disabled=false;}
+});
+
+const revealElements=document.querySelectorAll('.cats .section-label,.cats .section-title,.cats .section-sub,.cats-grid,.products-header,.products-grid,.promo-text,.promo-code');
+revealElements.forEach(element=>element.classList.add('scroll-reveal'));
+if('IntersectionObserver' in window){
+  const revealObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },{threshold:.12});
+  revealElements.forEach(element=>revealObserver.observe(element));
+}else{
+  revealElements.forEach(element=>element.classList.add('is-visible'));
+}
+
+// CATS
+const cg=document.getElementById('catsGrid');
+CATS.forEach((c,i)=>{
+  const d=document.createElement('div');
+  d.className='cat-card'+(c.name===activeFilter?' active':'');
+  d.innerHTML=`<div class="cat-icon">${c.icon}</div><div class="cat-name">${c.name}</div><div class="cat-count" data-category-count="${c.name}">0 article</div>`;
+  d.onclick=()=>{
+    document.querySelectorAll('.cat-card').forEach(x=>x.classList.remove('active'));
+    d.classList.add('active');
+    activeFilter=c.name;
+    document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.toggle('active',b.dataset.filter===c.name)});
+    renderProducts();
+  };
+  cg.appendChild(d);
+});
+
+function updateCategoryCounts(){
+  document.querySelectorAll('[data-category-count]').forEach(element=>{
+    const count=PRODUCTS.filter(product=>product.cat===element.dataset.categoryCount).length;
+    element.textContent=`${count} article${count>1?'s':''}`;
+  });
+}
+updateCategoryCounts();
+
+// FILTERS
+const fb=document.getElementById('filterBar');
+FILTERS.forEach(f=>{
+  const b=document.createElement('button');
+  b.className='filter-btn'+(f==='Tout'?' active':'');
+  b.dataset.filter=f;
+  b.textContent=f;
+  b.onclick=()=>{
+    activeFilter=f;
+    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    renderProducts();
+  };
+  fb.appendChild(b);
+});
+
+document.querySelectorAll('.filter-btn').forEach(button=>{
+  button.classList.toggle('active',button.dataset.filter===activeFilter);
+});
+
+async function loadProducts(){
+  try{
+    const res = await fetch(API_PRODUCTS);
+    if(res.ok){
+      const data = await res.json();
+      if(Array.isArray(data) && data.length){
+        PRODUCTS = data.map(p=>({
+          id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.oldPrice||null,
+          image:p.image||p.imageUrl||p.picture||'',badge:p.badge||null,badgeType:p.badgeType||'',
+        }));
+        updateCategoryCounts();
+      }
+    }
+  }catch(e){
+    console.warn('Impossible de charger les produits depuis le backend Spring Boot', e);
+  }finally{
+    renderProducts();
+    updateCartUI();
+  }
+}
+
+function renderProducts(){
+  const pg=document.getElementById('productsGrid');
+  pg.innerHTML='';
+  const list=activeFilter==='Tout'?PRODUCTS:PRODUCTS.filter(p=>p.cat===activeFilter);
+  list.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='product-card';
+    d.innerHTML=`
+      <div class="product-img">
+        ${p.badge?`<div class="product-badge ${p.badgeType}">${p.badge}</div>`:''}
+        <img src="${p.image}" alt="${p.name}" loading="lazy" />
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-bottom">
+          <div class="product-price">
+            ${fmt(p.price)}
+            ${p.oldPrice?`<span class="old">${fmt(p.oldPrice)}</span>`:''}
+          </div>
+          <button class="add-btn" id="ab-${p.id}" onclick="addToCart(${p.id})">+</button>
+        </div>
+      </div>
+    `;
+    pg.appendChild(d);
+    setImageFallback(d.querySelector('.product-img img'));
+  });
+}
+
+document.querySelectorAll('.cat-card').forEach((card,index)=>{
+  card.classList.toggle('active',index===0 && activeFilter==='Tout');
+});
+loadProducts();
+
+function addToCart(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const existing=cart.find(x=>x.id===id);
+  if(existing)existing.qty++;
+  else cart.push({...p,qty:1});
+  updateCartUI();
+  const btn=document.getElementById('ab-'+id);
+  if(btn){btn.classList.add('added');setTimeout(()=>btn.classList.remove('added'),400)}
+  showToast('✅ '+p.name+' ajouté au panier');
+}
+
+function removeFromCart(id){
+  cart=cart.filter(x=>x.id!==id);
+  updateCartUI();
+}
+
+function changeQty(id,delta){
+  const item=cart.find(x=>x.id===id);
+  if(!item)return;
+  item.qty+=delta;
+  if(item.qty<=0)removeFromCart(id);
+  else updateCartUI();
+}
+
+function updateCartUI(){
+  saveCart();
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const count=cart.reduce((s,x)=>s+x.qty,0);
+  document.getElementById('cartCount').textContent=count;
+  const ci=document.getElementById('cartItems');
+  const cf=document.getElementById('cartFooter');
+  const checkoutDetails = document.getElementById('checkoutDetails');
+  if(cart.length===0){
+    ci.innerHTML=`<div class="cart-empty"><div class="cart-empty-icon">🛍️</div><div>Ton panier est vide</div><div class="cart-empty-hint">Ajoute des articles pour commencer</div></div>`;
+    cf.style.display='none';
+    checkoutDetails.style.display='none';
+  }else{
+    ci.innerHTML=cart.map(x=>`
+      <div class="cart-item">
+        <div class="cart-item-img"><img src="${x.image}" alt="${x.name}" /></div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${x.name}</div>
+          <div class="cart-item-price">${fmt(x.price)}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty(${x.id},-1)">−</button>
+            <span class="qty-val">${x.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${x.id},1)">+</button>
+          </div>
+        </div>
+        <button class="remove-item" onclick="removeFromCart(${x.id})">✕</button>
+      </div>
+    `).join('');
+    ci.querySelectorAll('.cart-item-img img').forEach(setImageFallback);
+    const deliveryCost = getDeliveryCost();
+    document.getElementById('cartTotal').textContent=fmt(total + deliveryCost);
+    cf.style.display='block';
+    checkoutDetails.style.display='block';
+  }
+}
+
+function getDeliveryCost(){
+  const method = document.getElementById('deliveryChoice')?.value;
+  if(method==='express') return 2500;
+  if(method==='pickup') return 0;
+  return 1500;
+}
+
+document.getElementById('deliveryChoice').addEventListener('change',updateCartUI);
+
+function toggleCart(){
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+function closeCartOutside(e){
+  if(e.target===document.getElementById('cartOverlay'))toggleCart();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function scrollProducts(){
+  document.getElementById('productsSection').scrollIntoView({behavior:'smooth'});
+}
+
+function showPaymentModal(message){
+  const modal=document.getElementById('paymentModal');
+  modal.querySelector('#paymentModalMessage').textContent=message;
+  modal.classList.add('open');
+}
+
+function closePaymentModal(){
+  document.getElementById('paymentModal').classList.remove('open');
+}
+
+async function orangeMoneyCheckout(){
+  if(cart.length===0){
+    showToast('Ajoute d’abord au moins un article au panier.');
+    return;
+  }
+  const currentUser = (() => { try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch(e){ return null; }})();
+  if(!currentUser){
+    window.location.href = 'compte.html?redirect=Chidra Free Shop.html';
+    return;
+  }
+  const deliveryMethod = document.getElementById('deliveryChoice')?.value || 'standard';
+  const deliveryCost = getDeliveryCost();
+  const order={
+    items:cart.map(({id,name,price,qty})=>({id,name,price,qty})),
+    total:cart.reduce((sum,x)=>sum+x.price*x.qty,0) + deliveryCost,
+    deliveryMethod,
+    deliveryCost,
+    customerAddress:document.getElementById('customerAddress')?.value || '',
+    customerPhone:document.getElementById('customerPhone')?.value || '',
+    customerName:currentUser.name || currentUser.email,
+    currency:'XOF'
+  };
+  try{
+    const res = await fetch(API_CHECKOUT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(order)
+    });
+    if(!res.ok){
+      const text = await res.text();
+      showPaymentModal('Le serveur a renvoyé une erreur Orange Money : '+(text||res.statusText));
+      return;
+    }
+    const data = await res.json();
+    if(data.paymentUrl){
+      window.location.href=data.paymentUrl;
+      return;
+    }
+    showPaymentModal(data.message||'Nous avons bien reçu ta commande. Suis les instructions Orange Money sur le serveur.');
+  }catch(error){
+    console.warn(error);
+    showPaymentModal('Impossible de contacter le backend Spring Boot. Vérifie que le service est lancé et disponible.');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>À propos - CHIDRA FREE SHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--electric:#1A6BFF;--lime:#C8FF00;--noir:#0A0A0A;--blanc:#FAFAF8;--gris:#1C1C1C;--muted:#888;--radius:12px;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--blanc);color:var(--noir);overflow-x:hidden}
+  nav{background:var(--noir);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:100;border-bottom:1px solid #222;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blanc);letter-spacing:2px}
+  .nav-links{display:flex;gap:1.5rem;list-style:none}
+  .nav-links a{color:#aaa;text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--lime)}
+  .page-header{padding:4rem 2rem;text-align:center;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:1px;margin-bottom:1rem;}
+  .page-header p{max-width:640px;margin:0 auto;font-size:1rem;color:var(--muted);line-height:1.8;}
+  .content{padding:2rem;max-width:860px;margin:0 auto;}
+  .content h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:1rem;}
+  .content p{color:#444;line-height:1.8;font-size:1rem;margin-bottom:1.5rem;}
+  .content-cta{display:inline-block;margin-top:.5rem;background:var(--electric);color:#fff;padding:.85rem 1.2rem;border-radius:10px;text-decoration:none;font-weight:700;transition:background .2s,transform .2s}
+  .content-cta:hover{background:#1558d0;transform:translateY(-2px)}
+  .back-link{display:inline-block;margin:2rem 2rem 0;color:var(--electric);text-decoration:none;font-weight:700;}
+  .back-link:hover{color:var(--lime)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">CHIDRA FREE SHOP</div>
+  <ul class="nav-links">
+    <li><a href="Chidra Free Shop.html">Accueil</a></li>
+    <li><a href="collections.html">Collections</a></li>
+    <li><a href="nouveautes.html">Nouveautés</a></li>
+    <li><a href="apropos.html">À propos</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li id="adminNavItem" class="is-hidden"><a href="admin.html">Admin</a></li>
+    <li><a id="accountNavLink" href="compte.html">Compte</a></li>
+  </ul>
+</nav>
+<section class="page-header">
+  <h1>À propos de CHIDRA FREE SHOP</h1>
+  <p>Chidra Free Shop est une boutique dédiée au style masculin africain moderne, avec un accent sur l’originalité, la qualité et les services personnalisés.</p>
+</section>
+<section class="content">
+  <h2>Notre mission</h2>
+  <p>Proposer une expérience mode complète, du prêt-à-porter aux services créatifs et cosmétiques, pour accompagner chaque client dans sa singularité.</p>
+  <h2>Nos valeurs</h2>
+  <p>Authenticité, audace et qualité sont au cœur de nos collections et de nos services.</p>
+  <h2>Pourquoi nous choisir</h2>
+  <p>Parce que chaque produit est sélectionné pour sa qualité, et chaque service est pensé pour répondre à une demande personnalisée et professionnelle.</p>
+  <a class="content-cta" href="collections.html">Découvrir nos collections →</a>
+</section>
+<a class="back-link" href="Chidra Free Shop.html">← Retour à l'accueil</a>
+<script src="common.js"></script>
+</body>
+</html>

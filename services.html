@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services - CHIDRA FREE SHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--electric:#1A6BFF;--lime:#C8FF00;--noir:#0A0A0A;--blanc:#FAFAF8;--gris:#1C1C1C;--muted:#888;--radius:12px;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--blanc);color:var(--noir);overflow-x:hidden}
+  nav{background:var(--noir);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:100;border-bottom:1px solid #222;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blanc);letter-spacing:2px}
+  .nav-links{display:flex;gap:1.5rem;list-style:none}
+  .nav-links a{color:#aaa;text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--lime)}
+  .page-header{padding:4rem 2rem;text-align:center;background:linear-gradient(180deg,rgba(10,10,10,.95),rgba(10,10,10,.85)),url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;color:#fff;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:1px;margin-bottom:1rem;}
+  .page-header p{max-width:600px;margin:0 auto;font-size:1rem;color:#ddd;line-height:1.8;}
+  .services{padding:4rem 2rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;}
+  .service-card{background:var(--noir);color:#fff;border-radius:18px;padding:2rem;border:1px solid #222;transition:transform .2s;}
+  .service-card:hover{transform:translateY(-4px)}
+  .service-card a{display:inline-block;margin-top:1.2rem;color:var(--lime);font-size:.82rem;font-weight:700;text-decoration:none}
+  .service-title{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;margin-bottom:.75rem;}
+  .service-desc{color:#ccc;line-height:1.8;font-size:.95rem;}
+  .back-link{display:inline-block;margin:2rem 2rem 0;color:var(--electric);text-decoration:none;font-weight:700;}
+  .back-link:hover{color:var(--lime)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">CHIDRA FREE SHOP</div>
+  <ul class="nav-links">
+    <li><a href="Chidra Free Shop.html">Accueil</a></li>
+    <li><a href="collections.html">Collections</a></li>
+    <li><a href="nouveautes.html">Nouveautés</a></li>
+    <li><a href="apropos.html">À propos</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li id="adminNavItem" class="is-hidden"><a href="admin.html">Admin</a></li>
+    <li><a id="accountNavLink" href="compte.html">Compte</a></li>
+  </ul>
+</nav>
+<section class="page-header">
+  <h1>Nos services</h1>
+  <p>Découvrez nos prestations de dessin numérique, personnalisation de vêtements, produits de beauté et matériel cosmétique pour une expérience Chidra Free Shop unique.</p>
+</section>
+<section class="services">
+  <article class="service-card">
+    <h2 class="service-title">Dessin numérique</h2>
+    <p class="service-desc">Création de visuels artistiques, portraits, illustrations et identités graphiques sur mesure, prêts à être partagés sur les réseaux ou imprimés.</p>
+    <a href="mailto:nacanaboprinceabdoulrachid@gmail.com?subject=Demande%20de%20dessin%20num%C3%A9rique">Demander un devis →</a>
+  </article>
+  <article class="service-card">
+    <h2 class="service-title">Personnalisation de vêtements</h2>
+    <p class="service-desc">Marquage, broderie et design personnalisé sur t-shirts, casquettes, hoodies et sacs pour une collection unique à votre image.</p>
+    <a href="mailto:nacanaboprinceabdoulrachid@gmail.com?subject=Personnalisation%20de%20v%C3%AAtement">Demander un devis →</a>
+  </article>
+  <article class="service-card">
+    <h2 class="service-title">Produits cosmétiques</h2>
+    <p class="service-desc">Large choix de cosmétiques pour homme, soins de peau et produits de beauté sélectionnés pour un style affirmé et soigné.</p>
+    <a href="mailto:nacanaboprinceabdoulrachid@gmail.com?subject=Produits%20cosm%C3%A9tiques">Nous contacter →</a>
+  </article>
+  <article class="service-card">
+    <h2 class="service-title">Matériel et accessoires</h2>
+    <p class="service-desc">Équipements de mode, accessoires stylés et matériel de qualité pour compléter votre garde-robe et votre routine beauté.</p>
+    <a href="mailto:nacanaboprinceabdoulrachid@gmail.com?subject=Mat%C3%A9riel%20et%20accessoires">Nous contacter →</a>
+  </article>
+</section>
+<a class="back-link" href="Chidra Free Shop.html">← Retour à l'accueil</a>
+<script src="common.js"></script>
+</body>
+</html>
