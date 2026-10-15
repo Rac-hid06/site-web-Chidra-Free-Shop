@@ -133,6 +133,7 @@
 <script>
   const publicApiBase = 'http://localhost:8080/api/products';
   const adminApiBase = 'http://localhost:8080/api/admin/products';
+  const adminApiTokenKey = 'chidraAdminApiToken';
   const productList = document.getElementById('productList');
   const saveBtn = document.getElementById('saveBtn');
   const clearBtn = document.getElementById('clearBtn');
@@ -149,6 +150,28 @@
   let uploadedImageBase64 = null;
   let products = [];
   const newsletterApiBase = 'http://localhost:8080/api/newsletter';
+
+  async function adminFetch(url, options = {}) {
+    let token = sessionStorage.getItem(adminApiTokenKey);
+    if (!token) {
+      token = window.prompt('Saisis le jeton API admin configuré dans Render.');
+      if (!token || !token.trim()) throw new Error('Jeton admin non saisi.');
+      token = token.trim();
+      sessionStorage.setItem(adminApiTokenKey, token);
+    }
+
+    const headers = new Headers(options.headers || {});
+    headers.set('Authorization', `Bearer ${token}`);
+    const response = await fetch(url, {...options, headers});
+    if (response.status === 401) {
+      sessionStorage.removeItem(adminApiTokenKey);
+      alert('Jeton admin invalide. Il sera redemandé à la prochaine action.');
+    }
+    if (response.status === 503) {
+      alert('Le jeton admin n’est pas encore configuré dans Render.');
+    }
+    return response;
+  }
 
   function setProductImageFallback(image) {
     image.addEventListener('error', () => {
@@ -178,23 +201,28 @@
 
   async function renderNewsletter() {
     try {
-      const response = await fetch(`${newsletterApiBase}/admin/subscribers`);
-      if (!response.ok) throw new Error('newsletter');
+      const response = await adminFetch(`${newsletterApiBase}/admin/subscribers`);
+      if (!response.ok) throw new Error(`Impossible de charger les abonnés (HTTP ${response.status}).`);
       const subscribers = await response.json();
       newsletterTable.innerHTML = subscribers.length ? subscribers.map(subscriber => `
         <tr><td>${subscriber.email}</td><td><button class="small-btn danger" onclick="removeSubscriber('${subscriber.email}')">Supprimer</button></td></tr>
       `).join('') : '<tr><td colspan="2" class="muted">Aucun abonné pour le moment.</td></tr>';
       newsletterStatus.textContent = `${subscribers.length} abonné(s)`;
     } catch (error) {
-      newsletterTable.innerHTML = '<tr><td colspan="2" class="muted">Backend newsletter indisponible.</td></tr>';
+      newsletterTable.innerHTML = '<tr><td colspan="2" class="muted">Impossible de charger les abonnés.</td></tr>';
+      newsletterStatus.textContent = error.message;
     }
   }
 
   async function removeSubscriber(email) {
     if (!confirm(`Retirer ${email} de la newsletter ?`)) return;
-    const response = await fetch(`${newsletterApiBase}/admin/subscribers?email=${encodeURIComponent(email)}`, {method: 'DELETE'});
-    newsletterStatus.textContent = response.ok ? 'Abonné retiré.' : 'Impossible de retirer cet abonné.';
-    if (response.ok) renderNewsletter();
+    try {
+      const response = await adminFetch(`${newsletterApiBase}/admin/subscribers?email=${encodeURIComponent(email)}`, {method: 'DELETE'});
+      newsletterStatus.textContent = response.ok ? 'Abonné retiré.' : `Impossible de retirer cet abonné (HTTP ${response.status}).`;
+      if (response.ok) renderNewsletter();
+    } catch (error) {
+      newsletterStatus.textContent = error.message;
+    }
   }
 
   function loadSettings() {
@@ -289,9 +317,13 @@
   async function removeProductImage(id) {
     const product = products.find(item => item.id === id);
     if (!product || !product.image || !confirm(`Supprimer l’image de ${product.name} ?`)) return;
-    const response = await fetch(`${adminApiBase}/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({...product, image: null}) });
-    status.textContent = response.ok ? 'Image supprimée. Le produit est conservé.' : 'Impossible de supprimer cette image.';
-    if (response.ok) fetchProducts();
+    try {
+      const response = await adminFetch(`${adminApiBase}/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({...product, image: null}) });
+      status.textContent = response.ok ? 'Image supprimée. Le produit est conservé.' : `Impossible de supprimer cette image (HTTP ${response.status}).`;
+      if (response.ok) fetchProducts();
+    } catch (error) {
+      status.textContent = error.message;
+    }
   }
 
   async function editProduct(id) {
@@ -310,9 +342,17 @@
 
   async function deleteProduct(id) {
     if (!confirm('Supprimer ce produit ?')) return;
-    await fetch(`${adminApiBase}/${id}`, { method:'DELETE' });
-    status.textContent = 'Produit supprimé.';
-    fetchProducts();
+    try {
+      const response = await adminFetch(`${adminApiBase}/${id}`, { method:'DELETE' });
+      if (!response.ok) {
+        status.textContent = `Impossible de supprimer le produit (HTTP ${response.status}).`;
+        return;
+      }
+      status.textContent = 'Produit supprimé.';
+      fetchProducts();
+    } catch (error) {
+      status.textContent = error.message;
+    }
   }
 
   saveBtn.addEventListener('click', async () => {
@@ -321,7 +361,7 @@
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId ? `${adminApiBase}/${editingId}` : adminApiBase;
     try {
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(body)
@@ -344,7 +384,7 @@
       status.textContent = `Produit ${verb} avec succès.`;
       await fetchProducts();
     } catch (error) {
-      status.textContent = 'Serveur inaccessible. Vérifie que le backend est lancé.';
+      status.textContent = error.message;
     } finally {
       saveBtn.disabled = false;
     }
@@ -366,6 +406,9 @@
     renderNewsletter();
     loadSettings();
     fetchProducts();
+  });
+  document.querySelector('a[href="compte.html?logout=1"]').addEventListener('click', () => {
+    sessionStorage.removeItem(adminApiTokenKey);
   });
 </script>
 </body>
